@@ -1,4 +1,4 @@
-## 参考
+## 環境構築 - 参考
 
 - Laradock A.2) Don’t have a PHP project yet
     - http://laradock.io/getting-started/#A2
@@ -10,6 +10,36 @@
     - https://qiita.com/katoosky/items/ed920df211945d84f7da
 - LaradockでMySQLが起動しない問題への対処
     - https://blog.84b9cb.info/posts/mysql-error-laradock/
+- nginxinc/docker-nginx - ログを標準出力へ
+    - https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile#L135
+
+------
+
+## Docker Build
+
+- ECSのチュートリアル - コンテナ運用を現実のものにする
+    - https://qiita.com/niisan-tokyo/items/4e72c6c11c3f9562fe66
+- Dockerfile から上の階層のディレクトリを参照する
+    - https://qiita.com/TKR/items/ac29ee783bc4684d0612
+- Dockerでlaravelの本番環境構築をしてみた (php-pfm,nginx, mysql, redis)
+    - https://qiita.com/mytv1/items/9c2f558dcd7b0c92e6b3
+- Laravelで標準出力にエラーログを出力する
+    - http://kayakuguri.github.io/blog/2017/06/16/larave-std-error/
+- Dockert調査　~ログ編~
+    - https://qiita.com/HommaHomma/items/f943fa3397bc3f386057
+
+```
+docker build -t katsuhiko/nginx -f ./docker/nginx/Dockerfile .
+docker build -t katsuhiko/php-fpm -f ./docker/php-fpm/Dockerfile .
+
+docker run -d --name php-fpm katsuhiko/php-fpm
+docker run -d --link php-fpm:php-fpm -p 80:80 katsuhiko/nginx
+
+docker ps -a
+
+docker stop [CONTAINER ID]
+docker rm [CONTAINER ID]
+```
 
 ------
 
