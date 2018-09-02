@@ -1,6 +1,6 @@
 ## 参考
 
-- Laradock A.2) Don’t have a PHP project yet
+- Laradock A.2) Don’t have a PHP project yet
     - http://laradock.io/getting-started/#A2
 - Laradockを使ってLaravel 5.5環境を構築する
     - https://qiita.com/rock619/items/62c2ab2252c405e26479
