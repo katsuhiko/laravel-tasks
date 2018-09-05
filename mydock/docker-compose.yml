@@ -22,9 +22,7 @@ services:
       - frontend
       - backend
   app:
-    #image: php:7.2-fpm-stretch
-    build:
-      context: ./php-fpm
+    image: katsuhikonagashima/php-fpm-mysql:7.2-stretch
     volumes:
       - ../:/var/www/html
     networks:
