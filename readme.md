@@ -43,6 +43,26 @@ docker rm [CONTAINER ID]
 
 ------
 
+## AWS ECS Fargate を使う
+
+- AWSのコンテナサービスECSをALBで分散処理する on Fargate
+    - https://qiita.com/IgnorantCoder/items/d4f16b1aadd1c03c0e26
+    
+上記に従えば、 Fargate を利用した環境を構築することができる。
+
+使わないときに料金を極力発生させない方法（停止方法！？）
+
+- ECS : クラスター > タブ.サービス - サービス名 > ボタン.更新 : タスク数を "0" へ更新する。
+- ECS : クラスター > タブ.タスク - タスク名.check > ボタン.停止
+- EC2 : ロードバランサー - ロードバランサー名.check > アクション.削除
+
+再開方法
+
+- EC2 : ロードバランサー : ALBの作成(手順は、上記のQiita記事)
+- ECS : クラスター > タブ.サービス - サービス名 > ボタン.更新 : タスク数を "1" へ更新する。
+
+------
+
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 <p align="center">
