@@ -2,5 +2,5 @@ FROM nginx:1.14-alpine
 
 COPY ./docker/server/nginx/default.conf /etc/nginx/conf.d/
 
-COPY ./ /var/www/html
-
+RUN mkdir -p /var/www/html/public
+COPY ./public/ /var/www/html/public

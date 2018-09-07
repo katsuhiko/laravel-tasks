@@ -30,6 +30,7 @@
 - AWS Fargateでコンテナ間通信させたいとき
     - https://qiita.com/taishin/items/84122ad85bedf8b8a682
 
+ローカルで動作確認する場合、 docker/server/nginx/default.conf の fastcgi_pass を 127.0.0.1 から app へ変更する。
 
 ```
 docker exec -it laravel-tasks_app_1 php artisan migrate
@@ -37,6 +38,7 @@ docker exec -it laravel-tasks_app_1 php artisan migrate
 docker build -t dev/web -f ./docker/server/nginx/Dockerfile .
 docker build -t dev/app -f ./docker/server/php-fpm/Dockerfile .
 
+docker-compose up -d db
 docker run -d --name app --link laravel-tasks_db_1:db --net laravel-tasks_backend dev/app
 docker run -d --name web --link app:app --net laravel-tasks_backend -p 80:80 dev/web
 
@@ -73,6 +75,15 @@ docker push 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/app:latest
 
 - EC2 : ロードバランサー : ALBの作成(手順は、上記のQiita記事)
 - ECS : クラスター > タブ.サービス - サービス名 > ボタン.更新 : タスク数を "1" へ更新する。
+
+------
+
+## CI CodePipeline
+
+- LaravelアプリケーションをCodePipeline/CodeBuildでECSに自動デプロイする
+    - https://qiita.com/imunew/items/687221e02d977564d610
+- LaravelアプリケーションをローカルでもAWSでもDockerで動かす
+    - https://qiita.com/imunew/items/1e4826030d725beb4710
 
 ------
 
