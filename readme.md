@@ -15,7 +15,7 @@
 
 ------
 
-## Docker Build
+## Docker Build & ECR
 
 - ECSのチュートリアル - コンテナ運用を現実のものにする
     - https://qiita.com/niisan-tokyo/items/4e72c6c11c3f9562fe66
@@ -27,18 +27,31 @@
     - http://kayakuguri.github.io/blog/2017/06/16/larave-std-error/
 - Dockert調査　~ログ編~
     - https://qiita.com/HommaHomma/items/f943fa3397bc3f386057
+- AWS Fargateでコンテナ間通信させたいとき
+    - https://qiita.com/taishin/items/84122ad85bedf8b8a682
+
 
 ```
-docker build -t katsuhiko/nginx -f ./docker/nginx/Dockerfile .
-docker build -t katsuhiko/php-fpm -f ./docker/php-fpm/Dockerfile .
+docker exec -it laravel-tasks_app_1 php artisan migrate
 
-docker run -d --name php-fpm katsuhiko/php-fpm
-docker run -d --link php-fpm:php-fpm -p 80:80 katsuhiko/nginx
+docker build -t dev/web -f ./docker/server/nginx/Dockerfile .
+docker build -t dev/app -f ./docker/server/php-fpm/Dockerfile .
 
-docker ps -a
+docker run -d --name app --link laravel-tasks_db_1:db --net laravel-tasks_backend dev/app
+docker run -d --name web --link app:app --net laravel-tasks_backend -p 80:80 dev/web
 
-docker stop [CONTAINER ID]
-docker rm [CONTAINER ID]
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+```
+
+```
+$(aws ecr get-login --no-include-email --region ap-northeast-1)
+
+docker tag dev/web:latest 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/web:latest
+docker push 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/web:latest
+
+docker tag dev/app:latest 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/app:latest
+docker push 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/app:latest
 ```
 
 ------
