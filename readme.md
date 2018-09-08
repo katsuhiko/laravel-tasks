@@ -85,6 +85,11 @@ docker push 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/app:latest
 - LaravelアプリケーションをローカルでもAWSでもDockerで動かす
     - https://qiita.com/imunew/items/1e4826030d725beb4710
 
+注意点
+
+- buildspec.yml の IMAGE_NAME(IMAGE_NAME_APP, IMAGE_NAME_WEB) とタスク定義のコンテナ名を合わせる必要がある。
+  IMAGE_DIFINITION の name 属性を変えることでも対応できるが、合わせる方が設定がわかりやすくなるので良いと思う。
+
 ------
 
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
