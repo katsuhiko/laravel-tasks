@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - pip install awscli --upgrade
+      - aws --version
+      - $(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
+      - IMAGE_NAME_APP=app
+      - IMAGE_NAME_WEB=web
+      - REPOSITORY_URI_APP=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROJECT_NAMESPACE}/${IMAGE_NAME_APP}
+      - REPOSITORY_URI_WEB=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROJECT_NAMESPACE}/${IMAGE_NAME_WEB}
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t ${REPOSITORY_URI_APP}:latest -f docker/server/php-fpm/Dockerfile .
+      - docker build -t ${REPOSITORY_URI_WEB}:latest docker/server/nginx
+      - docker tag ${REPOSITORY_URI_APP}:latest ${REPOSITORY_URI_APP}:$IMAGE_TAG
+      - docker tag ${REPOSITORY_URI_WEB}:latest ${REPOSITORY_URI_WEB}:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push ${REPOSITORY_URI_APP}:latest
+      - docker push ${REPOSITORY_URI_APP}:$IMAGE_TAG
+      - docker push ${REPOSITORY_URI_WEB}:latest
+      - docker push ${REPOSITORY_URI_WEB}:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - IMAGE_DIFINITION_APP="{\"name\":\"${IMAGE_NAME_APP}\",\"imageUri\":\"${REPOSITORY_URI_APP}:${IMAGE_TAG}\"}"
+      - IMAGE_DIFINITION_WEB="{\"name\":\"${IMAGE_NAME_WEB}\",\"imageUri\":\"${REPOSITORY_URI_WEB}:${IMAGE_TAG}\"}"
+      - echo "[${IMAGE_DIFINITION_APP},${IMAGE_DIFINITION_WEB}]" > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
