@@ -35,6 +35,7 @@ services:
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_PASSWORD=root
     volumes:
+      - ./docker/mysql/etc-mysql.cnf:/etc/mysql/conf.d/etc-mysql.cnf
       - db-data:/var/lib/mysql
     networks:
       - backend
