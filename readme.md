@@ -76,6 +76,21 @@ docker push 999999999999.dkr.ecr.ap-northeast-1.amazonaws.com/dev/app:latest
 - EC2 : ロードバランサー : ALBの作成(手順は、上記のQiita記事)
 - ECS : クラスター > タブ.サービス - サービス名 > ボタン.更新 : タスク数を "1" へ更新する。
 
+Service がのこってしまい、Hosted Zone を消せない場合
+
+Service と Namespace を aws cli(コマンド)で削除する。
+
+```
+aws servicediscovery list-services --region <region_name>
+aws servicediscovery delete-service --id <service_discovery_service_id> --region <region_name>
+aws servicediscovery list-namespaces --region <region_name>
+aws servicediscovery delete-namespace --id <service_discovery_namespace_id> --region <region_name>
+```
+
+- 参考
+    - https://forums.aws.amazon.com/thread.jspa?threadID=279241
+    - https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/delete-service.html
+
 ------
 
 ## CI CodePipeline
